@@ -8,7 +8,6 @@ let plants = [
 let nextId = 5;
 //-------------------------------------------------------------------------------------
 const express = require('express');
-const { Response } = require('undici-types');
 const app = express();
 const PORT = 8080;
 app.use(express.json());
@@ -41,12 +40,14 @@ app.patch('/api/plants/:id', (request, response) =>{
     ? Object.assign(plantToUpdate, request.body) 
     && response.json(plantToUpdate) 
     : response.status(404).send('Plant not found')
+    
 } )
 
 app.delete('/api/plants/:id', (request, response) =>{
     const plantId = Number(request.params.id);
     plants = plants.filter((target) => { return target.id !== plantId});
-    response.status(204).send(`Plant ${plantId} deleted`);
+    console.log(`Plant ${plantId} deleted`)
+    response.status(204).send();
 
 } )
 
