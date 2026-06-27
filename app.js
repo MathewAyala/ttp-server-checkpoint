@@ -13,13 +13,23 @@ const PORT = 8080;
 app.use(express.json());
 
 
+// app.get('/api/plants', (request, response) =>{
+//     response.json(plants)
+// } )
+
+//the query values are set to lowercase
 app.get('/api/plants', (request, response) =>{
-    response.json(plants)
+    const {type,sunlight} = request.query;
+    const plantType = plants.filter(plant => plant.type.toLowerCase() === type)
+    const amountOfSunlight = plants.filter(amount => amount.sunlight.toLowerCase() === sunlight)
+    
+    response.json(plantType || amountOfSunlight)
 } )
 
-app.get('/api/plants/:id', (request, response) =>{
+app.get('/api/plants/:id', async (request, response) =>{
     const plantId = Number(request.params.id);
     const plant = plants.find((target) => target.id === plantId)
+    await  new Promise ((resolve) => setTimeout(resolve,500)) 
     plant
     ? response.json(plant) 
     : response.status(404).send("Plant not found")
@@ -38,7 +48,7 @@ app.patch('/api/plants/:id', (request, response) =>{
     const plantToUpdate = plants.find((target) => target.id === plantId)
     plantToUpdate 
     ? Object.assign(plantToUpdate, request.body) 
-    && response.json(plantToUpdate) 
+    && response.status(201).json(plantToUpdate) 
     : response.status(404).send('Plant not found')
     
 } )
@@ -47,7 +57,7 @@ app.delete('/api/plants/:id', (request, response) =>{
     const plantId = Number(request.params.id);
     plants = plants.filter((target) => { return target.id !== plantId});
     console.log(`Plant ${plantId} deleted`)
-    response.status(204).send();
+    response.status(204).send('Plant deleted');
 
 } )
 
